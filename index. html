@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Job Matcher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Resume Job Matcher</h1>
+    <p>Compare your resume with a job description</p>
+  </header>
+
+  <main>
+    <section>
+      <label for="resume">Paste your resume</label>
+      <textarea id="resume" placeholder="Paste your resume text here..."></textarea>
+    </section>
+
+    <section>
+      <label for="job">Paste the job description</label>
+      <textarea id="job" placeholder="Paste the job description here..."></textarea>
+    </section>
+
+    <button id="matchBtn">Match Resume</button>
+
+    <section id="result" class="hidden">
+      <h2>Match Score</h2>
+      <div id="score"></div>
+
+      <h3>Matched Keywords</h3>
+      <div id="matched"></div>
+
+      <h3>Missing Keywords</h3>
+      <div id="missing"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

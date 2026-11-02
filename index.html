@@ -2,41 +2,302 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume Job Matcher</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#4f46e5">
+  <title>Resume Job Matcher | Your next career step</title>
+
+  <style>
+    :root {
+      --bg: #f3f5fc;
+      --card: #ffffff;
+      --text: #19233b;
+      --muted: #59657a;
+      --accent: #4f46e5;
+      --border: #dce2ef;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    button, textarea { font: inherit; }
+
+    .container {
+      width: min(1040px, 92%);
+      margin: auto;
+    }
+
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 750;
+      letter-spacing: -.4px;
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      color: white;
+      border-radius: 12px;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    .hero {
+      padding: 45px 0 26px;
+      max-width: 720px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 1.7px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.15;
+      letter-spacing: -1.6px;
+      margin: 12px 0 16px;
+    }
+
+    h2 {
+      font-size: 23px;
+      letter-spacing: -.6px;
+      margin: 0 0 8px;
+    }
+
+    h3 { margin: 0 0 8px; font-size: 18px; }
+
+    p { margin: 0 0 12px; }
+
+    .muted { color: var(--muted); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 8px 24px rgba(30, 45, 90, .035);
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .field-help {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 245px;
+      resize: vertical;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fafbff;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    textarea:focus {
+      outline: 3px solid #e0e7ff;
+      border-color: var(--accent);
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      border-radius: 11px;
+      font-weight: 650;
+      padding: 12px 20px;
+    }
+
+    button:focus-visible {
+      outline: 3px solid #818cf8;
+      outline-offset: 4px;
+    }
+
+    .primary {
+      color: white;
+      background: var(--accent);
+    }
+
+    .primary:hover { background: #4338ca; }
+
+    .secondary {
+      color: var(--accent);
+      background: #eef2ff;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .privacy {
+      font-size: 12px;
+      margin: 14px 0 0;
+      color: var(--muted);
+    }
+
+    #error {
+      color: #a32132;
+      margin-top: 14px;
+    }
+
+    [hidden] { display: none !important; }
+
+    #results {
+      margin-top: 30px;
+      scroll-margin-top: 20px;
+    }
+
+    .score-card {
+      display: grid;
+      grid-template-columns: 145px 1fr;
+      align-items: center;
+      gap: 28px;
+      background: linear-gradient(125deg, #fff, #eef2ff);
+    }
+
+    .score-ring {
+      --angle: 0deg;
+      height: 140px;
+      width: 140px;
+      border-radius: 50%;
+      padding: 10px;
+      background:
+        conic-gradient(var(--accent) var(--angle), #dfe4f4 0deg);
+    }
+
+    .score-inner {
+      height: 100%;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      border-radius: 50%;
+      background: white;
+    }
+
+    #score {
+      font-size: 33px;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+
+    .score-caption { font-size: 12px; color: var(--muted); }
+
+    .explanation {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    summary { cursor: pointer; font-weight: 650; }
+
+    .section-heading { margin: 30px 0 16px; }
+
+    .growth-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 750;
+      color: var(--accent);
+      background: #eef2ff;
+      border-radius: 30px;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+    }
+
+    .growth-card p { font-size: 14px; }
+
+    .label {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .plan { margin: 0; padding-left: 23px; }
+    .plan li { padding: 7px 0 7px 5px; }
+
+    .notice {
+      padding: 16px 18px;
+      border-left: 3px solid var(--accent);
+      background: #eef2ff;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 650px) {
+      .input-grid, .growth-grid, .score-card {
+        grid-template-columns: 1fr;
+      }
+
+      .card { padding: 20px; }
+      .hero { padding-top: 30px; }
+      .score-ring { margin: auto; }
+      .actions button { flex: 1; }
+    }
+  </style>
 </head>
+
 <body>
   <header>
-    <h1>Resume Job Matcher</h1>
-    <p>Compare your resume with a job description</p>
+    <div class="container brand">
+      <span class="logo" aria-hidden="true">RJ</span>
+      <span>Resume Job Matcher</span>
+    </div>
   </header>
 
-  <main>
-    <section>
-      <label for="resume">Paste your resume</label>
-      <textarea id="resume" placeholder="Paste your resume text here..."></textarea>
-    </section>
-
-    <section>
-      <label for="job">Paste the job description</label>
-      <textarea id="job" placeholder="Paste the job description here..."></textarea>
-    </section>
-
-    <button id="matchBtn">Match Resume</button>
-
-    <section id="result" class="hidden">
-      <h2>Match Score</h2>
-      <div id="score"></div>
-
-      <h3>Matched Keywords</h3>
-      <div id="matched"></div>
-
-      <h3>Missing Keywords</h3>
-      <div id="missing"></div>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
-</body>
-</html>
+  <main class="container">
+    <section class="hero">
+      <span class="eyebrow">Your next career step</span>
+      <h1>Understand your fit.<br>Build your next skill.</h1>
+      <p c

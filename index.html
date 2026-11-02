@@ -220,8 +220,17 @@
       letter-spacing: -1px;
     }
 
-    .score-caption { font-size: 12px; color: var(--muted); }
-    .explanation { margin-top: 16px; font-size: 13px; color: var(--muted); }
+    .score-caption {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .explanation {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
     summary { cursor: pointer; font-weight: 650; }
     .section-heading { margin: 30px 0 16px; }
 
@@ -244,7 +253,6 @@
 
     .growth-card p { font-size: 14px; }
     .label { color: var(--text); font-weight: 700; }
-
     .plan { margin: 0; padding-left: 23px; }
     .plan li { padding: 7px 0 7px 5px; }
 
@@ -300,20 +308,20 @@
         <div>
           <label for="resume">Your resume</label>
           <span class="field-help">
-            Paste the text. You can leave out personal details.
+            Paste your resume or enter skills for a quick test.
           </span>
           <textarea id="resume"
-            placeholder="Include your skills, experience, and projects..."
+            placeholder="Example: Python SQL"
           ></textarea>
         </div>
 
         <div>
           <label for="job">Job description</label>
           <span class="field-help">
-            Include the responsibilities and qualifications.
+            Paste the description or enter the skills the role needs.
           </span>
           <textarea id="job"
-            placeholder="Paste the description of the role you want..."
+            placeholder="Example: Python SQL Excel"
           ></textarea>
         </div>
       </div>
@@ -613,18 +621,17 @@
       const job = normalize($("job").value);
 
       if (!resume || !job) {
-        showError("Please paste both your resume and the job description.");
+        showError("Please enter text in both boxes.");
         return;
       }
 
-      
       const requested = skills.filter(skill => containsSkill(job, skill));
 
       if (!requested.length) {
         showError(
-          "This job description does not contain skills recognized by this version. " +
-          "It cannot provide a meaningful score for this role. " +
-          "Try including the full description; do not add unrelated keywords."
+          "No supported skills were recognized in the job description. " +
+          "For a quick test, try: Python SQL Excel. " +
+          "For a real analysis, use the actual job description."
         );
         return;
       }
@@ -679,11 +686,13 @@
 
       priorities.forEach(skill => {
         const card = element("article", "", "card growth-card");
+
         card.append(element(
           "span",
           deepen ? "DEEPEN YOUR PRACTICE" : "DEVELOP OR DEMONSTRATE",
           "tag"
         ));
+
         card.append(element("h3", skill.name));
         addLine(card, "Focus:", skill.learn);
         addLine(card, "Practice idea:", skill.project);
@@ -692,6 +701,7 @@
           "Show your progress:",
           "Describe what you built, the decisions you made, and what you learned."
         );
+
         $("growth").append(card);
       });
 
@@ -721,20 +731,15 @@
       );
 
       $("results").hidden = false;
-      $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+      $("results").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
     });
 
     $("example").addEventListener("click", () => {
-      $("resume").value =
-        "I am a junior analyst with Python, SQL, and Excel experience. " +
-        "I cleaned sales data using Python, queried a sample database " +
-        "using SQL, and created monthly summaries in Excel.";
-
-      $("job").value =
-        "We are hiring a data analyst. The role involves Python, SQL, " +
-        "Excel, Power BI, statistics, and communication. Responsibilities " +
-        "include preparing reports, building dashboards, and explaining " +
-        "results clearly to business stakeholders.";
+      $("resume").value = "Python SQL";
+      $("job").value = "Python SQL Excel";
 
       $("results").hidden = true;
       $("error").hidden = true;

@@ -617,14 +617,7 @@
         return;
       }
 
-      if (resume.split(/\s+/).length < 15 ||
-          job.split(/\s+/).length < 15) {
-        showError(
-          "Please include at least 15 words in each box so the report has some context."
-        );
-        return;
-      }
-
+      
       const requested = skills.filter(skill => containsSkill(job, skill));
 
       if (!requested.length) {

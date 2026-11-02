@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#4f46e5">
-  <title>Resume Job Matcher | Your next career step</title>
+  <title>Resume Job Matcher</title>
 
   <style>
     :root {
@@ -85,9 +85,7 @@
     }
 
     h3 { margin: 0 0 8px; font-size: 18px; }
-
     p { margin: 0 0 12px; }
-
     .muted { color: var(--muted); }
 
     .card {
@@ -200,8 +198,10 @@
       width: 140px;
       border-radius: 50%;
       padding: 10px;
-      background:
-        conic-gradient(var(--accent) var(--angle), #dfe4f4 0deg);
+      background: conic-gradient(
+        var(--accent) var(--angle),
+        #dfe4f4 0deg
+      );
     }
 
     .score-inner {
@@ -221,15 +221,8 @@
     }
 
     .score-caption { font-size: 12px; color: var(--muted); }
-
-    .explanation {
-      margin-top: 16px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
+    .explanation { margin-top: 16px; font-size: 13px; color: var(--muted); }
     summary { cursor: pointer; font-weight: 650; }
-
     .section-heading { margin: 30px 0 16px; }
 
     .growth-grid {
@@ -250,11 +243,7 @@
     }
 
     .growth-card p { font-size: 14px; }
-
-    .label {
-      color: var(--text);
-      font-weight: 700;
-    }
+    .label { color: var(--text); font-weight: 700; }
 
     .plan { margin: 0; padding-left: 23px; }
     .plan li { padding: 7px 0 7px 5px; }
@@ -300,4 +289,471 @@
     <section class="hero">
       <span class="eyebrow">Your next career step</span>
       <h1>Understand your fit.<br>Build your next skill.</h1>
-      <p c
+      <p class="muted">
+        Compare your resume with a role and explore practical ways
+        to develop toward it.
+      </p>
+    </section>
+
+    <section class="card" aria-label="Resume analysis inputs">
+      <div class="input-grid">
+        <div>
+          <label for="resume">Your resume</label>
+          <span class="field-help">
+            Paste the text. You can leave out personal details.
+          </span>
+          <textarea id="resume"
+            placeholder="Include your skills, experience, and projects..."
+          ></textarea>
+        </div>
+
+        <div>
+          <label for="job">Job description</label>
+          <span class="field-help">
+            Include the responsibilities and qualifications.
+          </span>
+          <textarea id="job"
+            placeholder="Paste the description of the role you want..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="analyze" type="button">
+          Analyze Resume
+        </button>
+        <button class="secondary" id="example" type="button">
+          Try an example
+        </button>
+      </div>
+
+      <p class="privacy">
+        Text is processed in this browser. This page does not upload
+        or save your resume.
+      </p>
+      <p id="error" role="alert" hidden></p>
+    </section>
+
+    <section id="results" aria-label="Your analysis" hidden>
+      <div class="card score-card">
+        <div class="score-ring" id="ring">
+          <div class="score-inner">
+            <span id="score"></span>
+            <span class="score-caption">skill coverage</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="eyebrow">Your match score</span>
+          <h2 id="headline"></h2>
+          <p class="muted" id="summary"></p>
+
+          <details class="explanation">
+            <summary>How is this calculated?</summary>
+            <p id="method"></p>
+            <p>
+              This is a rules-based skill-mention check, not an AI
+              assessment, ATS score, or hiring prediction. It does not
+              verify proficiency, qualifications, experience length,
+              or whether a skill mention is positive or negative.
+              Each recognized skill has equal weight.
+            </p>
+          </details>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <h2>Your growth priorities</h2>
+        <p class="muted">
+          Practical next steps based on recognized skills in this role.
+        </p>
+      </div>
+
+      <div id="notice" class="notice"></div>
+      <div id="growth" class="growth-grid"></div>
+
+      <div class="section-heading">
+        <h2>Where to focus next</h2>
+        <p class="muted">A manageable starting point, not a deadline.</p>
+      </div>
+
+      <div class="card">
+        <ol class="plan" id="plan"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    Built for progress, not perfection. Recommendations are curated
+    learning ideas, not a complete career assessment.
+  </footer>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    const skills = [
+      {
+        name: "Python",
+        aliases: ["python"],
+        learn: "Practice functions, collections, file handling, and debugging.",
+        project: "Build a script that cleans a CSV file and summarizes its contents."
+      },
+      {
+        name: "SQL",
+        aliases: ["sql", "mysql", "postgresql", "postgres", "sqlite", "sql server"],
+        learn: "Practice filtering, joins, grouping, and window functions.",
+        project: "Use a sample sales database to answer five business questions."
+      },
+      {
+        name: "Excel",
+        aliases: ["excel", "microsoft excel"],
+        learn: "Practice lookup formulas, pivot tables, and data cleaning.",
+        project: "Create a spreadsheet report with a pivot table and summary chart."
+      },
+      {
+        name: "Power BI",
+        aliases: ["power bi", "powerbi"],
+        learn: "Practice Power Query, data relationships, and basic DAX measures.",
+        project: "Build an interactive sales dashboard and explain three findings."
+      },
+      {
+        name: "Tableau",
+        aliases: ["tableau"],
+        learn: "Practice calculated fields, filters, and dashboard layout.",
+        project: "Create a dashboard that answers a specific business question."
+      },
+      {
+        name: "JavaScript",
+        aliases: ["javascript", "ecmascript", "js"],
+        learn: "Practice functions, arrays, DOM events, and asynchronous requests.",
+        project: "Build a searchable interface that handles loading and error states."
+      },
+      {
+        name: "HTML",
+        aliases: ["html", "html5"],
+        learn: "Practice semantic structure, forms, and accessible labels.",
+        project: "Create a structured application form with clear validation."
+      },
+      {
+        name: "CSS",
+        aliases: ["css", "css3"],
+        learn: "Practice spacing, typography, Flexbox, Grid, and responsive layouts.",
+        project: "Build a page that works well on both phones and laptops."
+      },
+      {
+        name: "React",
+        aliases: ["react", "react.js", "reactjs"],
+        learn: "Practice components, props, state, and accessible form handling.",
+        project: "Build a task dashboard with filtering and editable items."
+      },
+      {
+        name: "Node.js",
+        aliases: ["node.js", "nodejs", "node js"],
+        learn: "Practice routing, input validation, and structured error handling.",
+        project: "Create a small API with documented endpoints and tests."
+      },
+      {
+        name: "Java",
+        aliases: ["java"],
+        learn: "Practice classes, collections, exceptions, and unit tests.",
+        project: "Build a small inventory application with input validation."
+      },
+      {
+        name: "C++",
+        aliases: ["c++", "cpp"],
+        learn: "Practice standard containers, memory ownership, and debugging.",
+        project: "Build a command-line program that processes structured records."
+      },
+      {
+        name: "C#",
+        aliases: ["c#", "csharp", "c sharp"],
+        learn: "Practice classes, LINQ, exception handling, and tests.",
+        project: "Build a small record-management application."
+      },
+      {
+        name: "Git",
+        aliases: ["git", "github", "gitlab", "version control"],
+        learn: "Practice commits, branches, merges, and pull requests.",
+        project: "Manage a project with feature branches and a clear README."
+      },
+      {
+        name: "AWS",
+        aliases: ["aws", "amazon web services"],
+        learn: "Study identity permissions, storage, compute, and cost controls.",
+        project: "Diagram a small cloud application and explain its security choices."
+      },
+      {
+        name: "Azure",
+        aliases: ["azure", "microsoft azure"],
+        learn: "Study cloud identity, resource organization, and deployment options.",
+        project: "Create an architecture plan with monitoring and cost estimates."
+      },
+      {
+        name: "Docker",
+        aliases: ["docker", "containerization"],
+        learn: "Practice images, containers, volumes, and environment configuration.",
+        project: "Containerize a small application and document how to run it."
+      },
+      {
+        name: "Machine learning",
+        aliases: ["machine learning", "scikit-learn", "scikit learn"],
+        learn: "Study train/test splits, baselines, evaluation, and data leakage.",
+        project: "Compare a baseline with a simple model and explain its limitations."
+      },
+      {
+        name: "Data analysis",
+        aliases: ["data analysis", "data analytics", "exploratory data analysis"],
+        learn: "Practice cleaning data, exploring patterns, and explaining uncertainty.",
+        project: "Analyze a public dataset and write a one-page findings report."
+      },
+      {
+        name: "Statistics",
+        aliases: ["statistics", "statistical analysis", "hypothesis testing"],
+        learn: "Review distributions, sampling, confidence intervals, and test assumptions.",
+        project: "Explore a dataset and explain what its results can and cannot establish."
+      },
+      {
+        name: "Communication",
+        aliases: ["communication", "presentation", "presentations", "stakeholder reporting"],
+        learn: "Practice explaining your work to a non-technical audience.",
+        project: "Turn a project into a five-slide presentation with clear recommendations."
+      },
+      {
+        name: "Project management",
+        aliases: ["project management", "project planning"],
+        learn: "Practice defining scope, dependencies, risks, and milestones.",
+        project: "Create a project plan with deliverables, owners, and a risk register."
+      },
+      {
+        name: "Agile",
+        aliases: ["agile", "scrum", "kanban"],
+        learn: "Study iterative delivery, work prioritization, and retrospectives.",
+        project: "Organize a project backlog and document a short delivery cycle."
+      },
+      {
+        name: "Figma",
+        aliases: ["figma"],
+        learn: "Practice auto layout, reusable components, and prototyping.",
+        project: "Design and prototype a short mobile onboarding flow."
+      },
+      {
+        name: "User research",
+        aliases: ["user research", "ux research", "usability testing"],
+        learn: "Practice neutral research questions, task design, and synthesis.",
+        project: "Run a small usability study with consent and summarize its limitations."
+      },
+      {
+        name: "SEO",
+        aliases: ["seo", "search engine optimization", "search engine optimisation"],
+        learn: "Study search intent, page structure, and measurement.",
+        project: "Audit a sample website and write a prioritized improvement plan."
+      },
+      {
+        name: "Digital marketing",
+        aliases: ["digital marketing", "online marketing"],
+        learn: "Practice audience definition, channel selection, and campaign measurement.",
+        project: "Create a sample campaign brief with a budget and success metrics."
+      },
+      {
+        name: "Customer service",
+        aliases: ["customer service", "customer support"],
+        learn: "Practice clarifying questions, issue documentation, and escalation.",
+        project: "Write responses to five realistic support scenarios."
+      }
+    ];
+
+    function normalize(text) {
+      return text.toLowerCase()
+        .replace(/[–—]/g, "-")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function mentions(text, alias) {
+      const escaped = normalize(alias)
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      const pattern = new RegExp(
+        "(^|[^a-z0-9_+#])" + escaped +
+        "(?=$|[^a-z0-9_+#])",
+        "i"
+      );
+
+      return pattern.test(text);
+    }
+
+    function containsSkill(text, skill) {
+      return skill.aliases.some(alias => mentions(text, alias));
+    }
+
+    function element(tag, text, className) {
+      const node = document.createElement(tag);
+      if (text) node.textContent = text;
+      if (className) node.className = className;
+      return node;
+    }
+
+    function addLine(parent, label, text) {
+      const p = element("p");
+      p.append(element("span", label + " ", "label"));
+      p.append(document.createTextNode(text));
+      parent.append(p);
+    }
+
+    function showError(message) {
+      $("error").textContent = message;
+      $("error").hidden = false;
+    }
+
+    $("analyze").addEventListener("click", () => {
+      $("error").hidden = true;
+      $("results").hidden = true;
+
+      const resume = normalize($("resume").value);
+      const job = normalize($("job").value);
+
+      if (!resume || !job) {
+        showError("Please paste both your resume and the job description.");
+        return;
+      }
+
+      if (resume.split(/\s+/).length < 15 ||
+          job.split(/\s+/).length < 15) {
+        showError(
+          "Please include at least 15 words in each box so the report has some context."
+        );
+        return;
+      }
+
+      const requested = skills.filter(skill => containsSkill(job, skill));
+
+      if (!requested.length) {
+        showError(
+          "This job description does not contain skills recognized by this version. " +
+          "It cannot provide a meaningful score for this role. " +
+          "Try including the full description; do not add unrelated keywords."
+        );
+        return;
+      }
+
+      const demonstrated = requested.filter(skill =>
+        containsSkill(resume, skill)
+      );
+
+      const development = requested.filter(skill =>
+        !containsSkill(resume, skill)
+      );
+
+      const score = Math.round(
+        demonstrated.length / requested.length * 100
+      );
+
+      $("score").textContent = score + "%";
+      $("ring").style.setProperty("--angle", score * 3.6 + "deg");
+
+      $("headline").textContent = score >= 80
+        ? "Build on your current foundation"
+        : score >= 45
+        ? "You have a foundation to develop"
+        : "Use this role to guide your learning";
+
+      $("summary").textContent =
+        "Your resume mentions " + demonstrated.length + " of " +
+        requested.length + " recognized skills in this job description. " +
+        "Use the suggestions below to decide what to practice or demonstrate next.";
+
+      $("method").textContent =
+        "Score = recognized job skills mentioned in your resume ÷ " +
+        "all recognized job skills × 100. " +
+        "Skills considered: " +
+        requested.map(skill => skill.name).join(", ") + ". " +
+        "Aliases are grouped together; this is not a complete reading of the role.";
+
+      const deepen = development.length === 0;
+      const priorities = (deepen ? demonstrated : development).slice(0, 4);
+
+      $("notice").textContent = deepen
+        ? "Your resume mentions all the skills this version recognized. " +
+          "That does not establish proficiency. These ideas can help you " +
+          "deepen your practice and demonstrate your work."
+        : "These skills were recognized in the job description but not clearly " +
+          "mentioned in your resume. If you already know them, focus on showing " +
+          "truthful examples rather than relearning them. Up to four are shown " +
+          "in library order, not employer priority; use the job description " +
+          "to decide which matters most.";
+
+      $("growth").replaceChildren();
+
+      priorities.forEach(skill => {
+        const card = element("article", "", "card growth-card");
+        card.append(element(
+          "span",
+          deepen ? "DEEPEN YOUR PRACTICE" : "DEVELOP OR DEMONSTRATE",
+          "tag"
+        ));
+        card.append(element("h3", skill.name));
+        addLine(card, "Focus:", skill.learn);
+        addLine(card, "Practice idea:", skill.project);
+        addLine(
+          card,
+          "Show your progress:",
+          "Describe what you built, the decisions you made, and what you learned."
+        );
+        $("growth").append(card);
+      });
+
+      const first = priorities[0];
+      const second = priorities[1];
+
+      const steps = [
+        "Choose your starting point: review how the role uses " + first.name +
+        ". If it is a genuine development need, use this focus: " + first.learn,
+
+        "Put it into practice: " + first.project,
+
+        second
+          ? "Build next: assess whether " + second.name +
+            " is required for the role, then try this practice task: " +
+            second.project
+          : "Go deeper: improve the project with testing, clearer documentation, " +
+            "or feedback from another person.",
+
+        "Update your resume honestly: add a specific example only after you " +
+        "have done the work. Explain your contribution and outcome; " +
+        "do not invent skills or results."
+      ];
+
+      $("plan").replaceChildren(
+        ...steps.map(step => element("li", step))
+      );
+
+      $("results").hidden = false;
+      $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    $("example").addEventListener("click", () => {
+      $("resume").value =
+        "I am a junior analyst with Python, SQL, and Excel experience. " +
+        "I cleaned sales data using Python, queried a sample database " +
+        "using SQL, and created monthly summaries in Excel.";
+
+      $("job").value =
+        "We are hiring a data analyst. The role involves Python, SQL, " +
+        "Excel, Power BI, statistics, and communication. Responsibilities " +
+        "include preparing reports, building dashboards, and explaining " +
+        "results clearly to business stakeholders.";
+
+      $("results").hidden = true;
+      $("error").hidden = true;
+      $("resume").focus();
+    });
+
+    ["resume", "job"].forEach(id => {
+      $(id).addEventListener("input", () => {
+        $("results").hidden = true;
+        $("error").hidden = true;
+      });
+    });
+  </script>
+</body>
+</html>
